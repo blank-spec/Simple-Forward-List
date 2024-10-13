@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 using namespace std;
 
@@ -24,12 +25,12 @@ public:
     if (other.head) {
         head = new Node<T>(other.head->data);
         TemTemp current = head;
-        TemTemp otherCurrent = other.head->next;
+        TemTemp otherTemp = other.head->next;
 
         while (otherCurrent) {
-            current->next = new Node<T>(otherCurrent->data);
+            current->next = new Node<T>(otherTemp->data);
             current = current->next;
-            otherCurrent = otherCurrent->next;
+            otherTemp = otherTemp->next;
         }
     }
 }
@@ -189,5 +190,3 @@ public:
     head = nullptr;
   }
 };
-
-int main() { return 0; }
