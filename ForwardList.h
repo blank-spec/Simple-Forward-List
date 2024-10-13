@@ -1,14 +1,16 @@
 #include <iostream>
 using namespace std;
 
-template <class T> struct Node {
+template <class T>
+struct Node {
   T data;
   Node<T> *next;
 
   Node(T value) : data(value), next(nullptr) {}
 };
 
-template <class T> class LinkedList {
+template <class T>
+class LinkedList {
 private:
   using TemTemp = Node<T> *;
   TemTemp head;
