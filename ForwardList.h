@@ -12,7 +12,7 @@ struct Node {
 template <class T>
 class LinkedList {
 private:
-  using TemTemp = Node<T> *;
+  using TemTemp = Node<T> *; // TemTemp = Template Temp
   TemTemp head;
   int size = 0;
 
