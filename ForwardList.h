@@ -20,6 +20,44 @@ private:
 public:
   LinkedList() : head(nullptr) {}
 
+  LinkedList(const LinkedList& other) : head(nullptr), size(other.size) {
+    if (other.head) {
+        head = new Node<T>(other.head->data);
+        TemTemp current = head;
+        TemTemp otherCurrent = other.head->next;
+
+        while (otherCurrent) {
+            current->next = new Node<T>(otherCurrent->data);
+            current = current->next;
+            otherCurrent = otherCurrent->next;
+        }
+    }
+}
+
+  LinkedList& operator=(const LinkedList& other) {
+    if (this != &other) {
+        this->~LinkedList();
+
+        size = other.size;
+
+        if (other.head) {
+            head = new Node<T>(other.head->data);
+            TemTemp temp = head;
+            Node<T>* otherTemp = other.head->data;
+
+            while (otherTemp) {
+                temp->next = new Node<T>(otherTemp->data);
+                temp = temp->next;
+                otherTemp = otherTemp->next;
+            }
+        }
+        else {
+            head = nullptr;
+        }
+    }
+    return *this;
+}
+
   void insert(const int index, const T &value) {
     if (index < 0 || index > size)
       throw out_of_range("Index out of bound");
