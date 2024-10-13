@@ -24,7 +24,7 @@ int main() {
     list.pop_back();     // 10 -> nullptr 
     list.insert(1, 11);  // 10 -> 11 -> nullptr
     list.pop_front();    // 11 -> nullptr
-    list.printList();
+    list.print_list();
     int index = list.index(11); // index = 0
 
     cout << list[1] << endl; // if invalid index - return head
