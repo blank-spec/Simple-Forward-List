@@ -65,13 +65,13 @@ public:
     --size;
   }
 
-  void pop_front() { remove(0); }
+  void pop_front()                  { remove(0); }
 
-  void pop_back() { remove(size - 1); }
+  void pop_back()                   { remove(size - 1); }
 
-  void push_front(const T &value) { insert(0, value); }
+  void push_front(const T &value)   { insert(0, value); }
 
-  void push_back(const T &value) { insert(size, value); }
+  void push_back(const T &value)    { insert(size, value); }
 
   int &at(const int index) const {
     if (index < 0 || index > size) {
@@ -88,6 +88,8 @@ public:
   }
 
   int &operator[](const int index) const {
+    if (index < 0 || index >= size)
+      return head->data;
     TemTemp temp = head;
 
     for (int i = 0; i < index; ++i) {
@@ -123,7 +125,7 @@ public:
     return false;
   }
 
-  void printList() const {
+  void print_list() const {
     TemTemp temp = head;
     while (temp != nullptr) {
       cout << temp->data << " -> ";
@@ -132,7 +134,7 @@ public:
     cout << "nullptr" << endl;
   }
 
-  int getSize() const { return size; }
+  int get_size() const { return size; }
 
   ~LinkedList() {
     TemTemp temp = head;
