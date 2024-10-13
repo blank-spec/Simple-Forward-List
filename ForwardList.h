@@ -7,6 +7,7 @@ struct Node {
   Node<T> *next;
 
   Node(T value) : data(value), next(nullptr) {}
+  Node() : data(T()), next(nullptr) {}
 };
 
 template <class T>
@@ -17,6 +18,8 @@ private:
   int size = 0;
 
 public:
+  LinkedList() : head(nullptr) {}
+
   void insert(const int index, const T &value) {
     if (index < 0 || index > size)
       throw out_of_range("Index out of bound");
