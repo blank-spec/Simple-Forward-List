@@ -26,13 +26,13 @@ public:
     LinkedList(const LinkedList& other) : head(nullptr), size(other.size) {
         if (other.head) {
             head = new Node<T>(other.head->data);
-            TemTemp current = head;
-            TemTemp otherCurrent = other.head->next;
+            TemTemp temp = head;
+            TemTemp otherTemp = other.head->next;
 
             while (otherCurrent) {
-                current->next = new Node<T>(otherCurrent->data);
-                current = current->next;
-                otherCurrent = otherCurrent->next;
+                temp->next = new Node<T>(otherTemp->data);
+                temp = temp->next;
+                otherTemp = otherTemp->next;
             }
         }
     }
