@@ -21,7 +21,7 @@ private:
 public:
   LinkedList() : head(nullptr) {}
 
-  LinkedList(const T& value) : Node(value) {}
+  LinkedList(const T& value) : head(Node(value)) {}
 
   LinkedList(const LinkedList& other) : head(nullptr), size(other.size) {
     if (other.head) {
