@@ -7,7 +7,7 @@ struct Node {
   T data;
   Node<T> *next;
 
-  Node(T value) : data(value), next(nullptr) {}
+  Node(const T& value) : data(value), next(nullptr) {}
   Node() : data(T()), next(nullptr) {}
 };
 
@@ -20,6 +20,8 @@ private:
 
 public:
   LinkedList() : head(nullptr) {}
+
+  LinkedList(const T& value) : Node(value) {}
 
   LinkedList(const LinkedList& other) : head(nullptr), size(other.size) {
     if (other.head) {
@@ -44,7 +46,7 @@ public:
         if (other.head) {
             head = new Node<T>(other.head->data);
             TemTemp temp = head;
-            Node<T>* otherTemp = other.head->data;
+            TemTemp otherTemp = other.head;
 
             while (otherTemp) {
                 temp->next = new Node<T>(otherTemp->data);
@@ -58,6 +60,24 @@ public:
     }
     return *this;
 }
+
+  LinkedList(LinkedList&& other) noexcept head(other.head), size(other.size) {
+    other.head = nullptr;
+    other.size = 0;
+  }
+
+  LinkedList& operator=(LinkedList&& other) noexcept {
+    if (this != &other) {
+      this->~LinkedList();
+
+      head = other.head;
+      size = other.size;
+
+      other.head = nullptr;
+      other.size = 0;
+    }
+    return *this;
+  }
 
   void insert(const int index, const T &value) {
     if (index < 0 || index > size)
