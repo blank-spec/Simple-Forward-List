@@ -16,27 +16,35 @@ private:
         Node() : data(T()), next(nullptr) {}
     };
 
-    Node* head;
-    Node* tail;  // Добавляем указатель на последний элемент
-    size_t size;
+    Node* head_;
+    Node* tail_;
+    size_t size_;
 
     void copy_from(const LinkedList& other) {
-        if (!other.head) return;
+        if (!other.head_) return;
 
-        head = new Node(other.head->data);
-        Node* curr = head;
-        Node* other_curr = other.head->next;
+        head_ = new Node(other.head_->data);
+        Node* curr = head_;
+        Node* other_curr = other.head_->next;
 
         while (other_curr) {
             curr->next = new Node(other_curr->data);
             curr = curr->next;
             other_curr = other_curr->next;
         }
-        tail = curr;
-        size = other.size;
+        tail_ = curr;
+        size_ = other.size_;
     }
 
 public:
+    using value_type = T;
+    using size_type = size_t;
+    using difference_type = std::ptrdiff_t;
+    using reference = T&;
+    using const_reference = const T&;
+    using pointer = T*;
+    using const_pointer = const T*;
+
     template <bool isConst>
     class baseIterator {
     private:
@@ -78,25 +86,26 @@ public:
     using iterator = baseIterator<false>;
     using const_iterator = baseIterator<true>;
 
-    iterator begin() noexcept { return iterator(head); }
+    iterator begin() noexcept { return iterator(head_); }
     iterator end() noexcept { return iterator(nullptr); }
-    const_iterator begin() const noexcept { return const_iterator(head); }
+    const_iterator begin() const noexcept { return const_iterator(head_); }
     const_iterator end() const noexcept { return const_iterator(nullptr); }
-    const_iterator cbegin() const noexcept { return const_iterator(head); }
+    const_iterator cbegin() const noexcept { return const_iterator(head_); }
     const_iterator cend() const noexcept { return const_iterator(nullptr); }
 
-    LinkedList() noexcept : head(nullptr), tail(nullptr), size(0) {}
+    LinkedList() noexcept : head_(nullptr), tail_(nullptr), size_(0) {}
 
-    explicit LinkedList(const T& value) : head(new Node(value)), tail(head), size(1) {}
+    explicit LinkedList(const T& value) : head_(new Node(value)), tail_(head_), size_(1) {}
 
-    LinkedList(const LinkedList& other) : head(nullptr), tail(nullptr), size(0) {
+    LinkedList(const LinkedList& other) : head_(nullptr), tail_(nullptr), size_(0) {
         copy_from(other);
     }
 
     LinkedList(LinkedList&& other) noexcept
-        : head(std::exchange(other.head, nullptr))
-        , tail(std::exchange(other.tail, nullptr))
-        , size(std::exchange(other.size, 0)) {}
+        : head_(std::exchange(other.head_, nullptr))
+        , tail_(std::exchange(other.tail_, nullptr))
+        , size_(std::exchange(other.size_, 0)) {
+    }
 
     LinkedList& operator=(LinkedList other) noexcept {
         swap(*this, other);
@@ -105,16 +114,16 @@ public:
 
     friend void swap(LinkedList& first, LinkedList& second) noexcept {
         using std::swap;
-        swap(first.head, second.head);
-        swap(first.tail, second.tail);
-        swap(first.size, second.size);
+        swap(first.head_, second.head_);
+        swap(first.tail_, second.tail_);
+        swap(first.size_, second.size_);
     }
 
     T& operator[](size_t index) {
-        if (index >= size) {
+        if (index >= size_) {
             throw out_of_range("Index out of range");
         }
-        Node* curr = head;
+        Node* curr = head_;
         for (size_t i = 0; i < index; ++i) {
             curr = curr->next;
         }
@@ -127,49 +136,50 @@ public:
 
     void push_back(const T& value) {
         Node* new_node = new Node(value);
-        if (!head) {
-            head = tail = new_node;
-        } else {
-            tail->next = new_node;
-            tail = new_node;
+        if (!head_) {
+            head_ = tail_ = new_node;
         }
-        ++size;
+        else {
+            tail_->next = new_node;
+            tail_ = new_node;
+        }
+        ++size_;
     }
 
     void push_front(const T& value) {
         Node* new_node = new Node(value);
-        new_node->next = head;
-        head = new_node;
-        if (!tail) tail = head;
-        ++size;
+        new_node->next = head_;
+        head_ = new_node;
+        if (!tail_) tail_ = head_;
+        ++size_;
     }
 
     T& front() {
-        if (!head) throw runtime_error("List is empty");
-        return head->data;
+        if (!head_) throw runtime_error("List is empty");
+        return head_->data;
     }
 
     const T& front() const {
-        if (!head) throw runtime_error("List is empty");
-        return head->data;
+        if (!head_) throw runtime_error("List is empty");
+        return head_->data;
     }
 
     T& back() {
-        if (!tail) throw runtime_error("List is empty");
-        return tail->data;
+        if (!tail_) throw runtime_error("List is empty");
+        return tail_->data;
     }
 
     const T& back() const {
-        if (!tail) throw runtime_error("List is empty");
-        return tail->data;
+        if (!tail_) throw runtime_error("List is empty");
+        return tail_->data;
     }
 
     void reverse() noexcept {
-        if (!head || !head->next) return;
+        if (!head_ || !head_->next) return;
 
         Node* prev = nullptr;
-        Node* curr = head;
-        tail = head;
+        Node* curr = head_;
+        tail_ = head_;
 
         while (curr) {
             Node* next = curr->next;
@@ -177,47 +187,47 @@ public:
             prev = curr;
             curr = next;
         }
-        head = prev;
+        head_ = prev;
     }
 
     void merge(LinkedList& other) {
         if (this == &other) return;
 
-        if (!head) {
-            head = std::exchange(other.head, nullptr);
-            tail = std::exchange(other.tail, nullptr);
-            size = std::exchange(other.size, 0);
+        if (!head_) {
+            head_ = std::exchange(other.head_, nullptr);
+            tail_ = std::exchange(other.tail_, nullptr);
+            size_ = std::exchange(other.size_, 0);
             return;
         }
 
-        if (!other.head) return;
+        if (!other.head_) return;
 
-        tail->next = other.head;
-        tail = other.tail;
-        size += other.size;
+        tail_->next = other.head_;
+        tail_ = other.tail_;
+        size_ += other.size_;
 
-        other.head = other.tail = nullptr;
-        other.size = 0;
+        other.head_ = other.tail_ = nullptr;
+        other.size_ = 0;
     }
 
-    [[nodiscard]] bool empty() const noexcept { return size == 0; }
-    [[nodiscard]] size_t getSize() const noexcept { return size; }
+    [[nodiscard]] bool empty() const noexcept { return size_ == 0; }
+    [[nodiscard]] size_t getSize() const noexcept { return size_; }
 
     void insert(const int index, const T& value) {
-        if (index < 0 || index > size)
+        if (index < 0 || index > size_)
             throw out_of_range("Index out of bound");
 
-        size++;
+        size_++;
         Node* newNode = new Node(value);
 
         if (index == 0) {
-            newNode->next = head;
-            head = newNode;
-            if (!tail) tail = head;
+            newNode->next = head_;
+            head_ = newNode;
+            if (!tail_) tail_ = head_;
             return;
         }
 
-        Node* temp = head;
+        Node* temp = head_;
         for (int i = 0; i < index - 1 && temp != nullptr; ++i) {
             temp = temp->next;
         }
@@ -225,45 +235,45 @@ public:
         if (temp != nullptr) {
             newNode->next = temp->next;
             temp->next = newNode;
-            if (!tail) tail = newNode;
+            if (!tail_) tail_ = newNode;
         }
     }
 
     bool equals(const T& a, const T& b) {
         if constexpr (is_same_v<T, pair<typename T::first_type, typename T::second_type>>) {
             return a.first == b.first;
-        } else {
+        }
+        else {
             return a == b;
         }
     }
 
-    // Удаление элемента по значению
     bool remove(const T& value) {
-        if (!head) {
+        if (!head_) {
             return false;
         }
 
-        if (equals(head->data, value)) {
-            Node* temp = head;
-            head = head->next;
-            if (!head) {
-                tail = nullptr;
+        if (equals(head_->data, value)) {
+            Node* temp = head_;
+            head_ = head_->next;
+            if (!head_) {
+                tail_ = nullptr;
             }
             delete temp;
-            --size;
+            --size_;
             return true;
         }
 
-        Node* current = head;
+        Node* current = head_;
         while (current->next != nullptr) {
             if (equals(current->next->data, value)) {
                 Node* temp = current->next;
                 current->next = temp->next;
-                if (temp == tail) {
-                    tail = current;
+                if (temp == tail_) {
+                    tail_ = current;
                 }
                 delete temp;
-                --size;
+                --size_;
                 return true;
             }
             current = current->next;
@@ -272,43 +282,43 @@ public:
     }
 
     void pop_front() {
-        if (!head) {
+        if (!head_) {
             return;
         }
-        Node* temp = head;
-        head = head->next;
-        if (!head) {
-            tail = nullptr;
+        Node* temp = head_;
+        head_ = head_->next;
+        if (!head_) {
+            tail_ = nullptr;
         }
         delete temp;
-        --size;
+        --size_;
     }
 
     void pop_back() {
-        if (!head) {
+        if (!head_) {
             return;
         }
 
-        if (head == tail) {
-            delete head;
-            head = tail = nullptr;
-            size = 0;
+        if (head_ == tail_) {
+            delete head_;
+            head_ = tail_ = nullptr;
+            size_ = 0;
             return;
         }
 
-        Node* current = head;
-        while (current->next != tail) {
+        Node* current = head_;
+        while (current->next != tail_) {
             current = current->next;
         }
 
-        delete tail;
-        tail = current;
-        tail->next = nullptr;
-        --size;
+        delete tail_;
+        tail_ = current;
+        tail_->next = nullptr;
+        --size_;
     }
 
     void printList() const {
-        Node* temp = head;
+        Node* temp = head_;
         while (temp != nullptr) {
             cout << temp->data << " -> ";
             temp = temp->next;
@@ -316,9 +326,8 @@ public:
         cout << "nullptr" << endl;
     }
 
-    // Поиск индекса элемента по значению
     int find_index(const T& value) const {
-        Node* current = head;
+        Node* current = head_;
         int index = 0;
 
         while (current != nullptr) {
@@ -332,16 +341,20 @@ public:
         return -1;
     }
 
+    size_t size() const {
+        return size_;
+    }
+
     ~LinkedList() {
-        if (!head)
+        if (!head_)
             return;
 
-        Node* temp = head;
+        Node* temp = head_;
         while (temp) {
             Node* nextNode = temp->next;
             delete temp;
             temp = nextNode;
         }
-        head = nullptr;
+        head_ = nullptr;
     }
 };
